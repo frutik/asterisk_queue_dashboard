@@ -42,9 +42,11 @@ logging.basicConfig(level=logging.INFO)
 
 class Application(tornado.web.Application):
     def __init__(self):
+        o = dict(QueueLog=QueueLog)
+
         handlers = [
-            (r'/getevents/([0-9]+)', GetEventsHandler),
-            ('/latest_event/', GetLatestEventHandler),
+            (r'/getevents/([0-9]+)', GetEventsHandler, o),
+            ('/latest_event/', GetLatestEventHandler, o),
         ]
         tornado.web.Application.__init__(self, handlers, http_settings)
 
