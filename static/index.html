@@ -2,6 +2,7 @@
 <head>
 <script type="text/javascript" src='/static/js/jquery-1.7.1.min.js'></script>
 <script src="/static/js/jquery.tmpl.min.js" type="text/javascript"></script>
+<script src="/get_latest_event/" type="text/javascript"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -30,7 +31,7 @@ $(document).ready(function() {
     
     function poll(){
         $.ajax({
-    	    url: "http://80.243.146.77:8888/getevents/" + last_event, 
+    	    url: "/getevents/" + last_event, 
     	    success: function(data){
 
 		    $('#test').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
