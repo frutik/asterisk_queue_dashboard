@@ -18,6 +18,15 @@ from sqlobject import *
 connection = connectionForURI(config.get('SQL', 'dsn'))
 sqlhub.processConnection = connection
 
+class QueueLog(SQLObject):
+    time = StringCol()
+
+    callid = StringCol()
+    queuename = StringCol()
+    agent = StringCol()
+    event = StringCol()
+    data = StringCol()
+
 http_settings = dict(
     cookie_secret=str(uuid.uuid1()),
     template_path=os.path.join(os.path.dirname(__file__), "templates"),

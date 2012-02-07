@@ -3,16 +3,16 @@ import tornado
 import time
 import simplejson as json
 
-from sqlobject import *
+#from sqlobject import *
 
-class QueueLog(SQLObject):
-    time = StringCol()
-
-    callid = StringCol()
-    queuename = StringCol()
-    agent = StringCol()
-    event = StringCol()
-    data = StringCol()
+#class QueueLog(SQLObject):
+#    time = StringCol()
+#
+#    callid = StringCol()
+#    queuename = StringCol()
+#    agent = StringCol()
+#    event = StringCol()
+#    data = StringCol()
 
 class GetEventsHandler(tornado.web.RequestHandler):
 
