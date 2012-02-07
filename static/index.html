@@ -1,6 +1,7 @@
 <html>
 <head>
 <script type="text/javascript" src='/static/js/jquery-1.7.1.min.js'></script>
+<script src="/static/js/jquery.tmpl.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -8,10 +9,9 @@ $(document).ready(function() {
     
     var last_event = '285811';
     
-    function node_creator(data) {
+    function caller_controller(data) {
 	if (data.event == 'ENTERQUEUE') {
 	    $('#callers').append('<div style="background-color:red;" class="caller_' + data.callid + '">' + data.data + '</div>');
-//	    $('#calls');
 	    console.log('add caller ' + data.callid);
 	}
 
@@ -19,26 +19,26 @@ $(document).ready(function() {
 	    console.log('remove caller ' + data.callid);
 	    $('.caller_' + data.callid).remove();
 	}
-    }
 
-    function node_status(data) {
-	if (data.event == 'ENTERQUEUE') {
+	if (data.event == 'CONNECTED') {
 	    $('.caller_' + data.callid).css('background-color', 'green');
 	}
+    }
+
+    function agent_controller(data) {
     }
     
     function poll(){
         $.ajax({
     	    url: "http://80.243.146.77:8888/getevents/" + last_event, 
     	    success: function(data){
-		    //alert(data.id);
+
 		    $('#test').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
 		    
-		    node_creator(data);
-		    node_status(data);
+		    caller_controller(data);
+		    agent_controller(data);
 		    
 		    last_event = data.id;
-		    
                         
     	    }, 
     	    error: function(error){
