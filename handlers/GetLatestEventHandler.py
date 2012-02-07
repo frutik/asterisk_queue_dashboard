@@ -20,7 +20,7 @@ class GetLatestEventHandler(tornado.web.RequestHandler):
     current_handle = None
 
     def initialize(self, **kwargs):
-        super(GetLatestEventHandler, self).initialize(kwargs)
+        super(GetLatestEventHandler, self).initialize()
         self.QueueLog = kwargs['QueueLog']
 
 #    @tornado.web.asynchronous
