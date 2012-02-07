@@ -19,6 +19,10 @@ class GetEventsHandler(tornado.web.RequestHandler):
     schedule_time = 0.2
     current_handle = None
 
+    def initialize(self, **kwargs):
+        super(GetEventsHandler, self).initialize(kwargs)
+        self.QueueLog = kwargs['QueueLog']
+
     @tornado.web.asynchronous
     def get(self, last_event_id):
         self.last_event_id = int(last_event_id)

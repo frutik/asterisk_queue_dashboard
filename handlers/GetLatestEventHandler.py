@@ -19,11 +19,15 @@ class GetLatestEventHandler(tornado.web.RequestHandler):
     schedule_time = 0.2
     current_handle = None
 
+    def initialize(self, **kwargs):
+        super(GetLatestEventHandler, self).initialize(kwargs)
+        self.QueueLog = kwargs['QueueLog']
+
 #    @tornado.web.asynchronous
     def get(self, QueueLog):
 #        self.schedule_execution(self.schedule_time, self.loop)
 #        try:
-        events = QueueLog.select().orderBy('-id').limit(1)
+        events = self.QueueLog.select().orderBy('-id').limit(1)
         event_id = events[0].id
 
 #        except:
