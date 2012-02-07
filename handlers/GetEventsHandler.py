@@ -2,6 +2,7 @@ import tornado.web
 import tornado
 import time
 import simplejson as json
+import logging
 
 class GetEventsHandler(tornado.web.RequestHandler):
 
@@ -22,7 +23,9 @@ class GetEventsHandler(tornado.web.RequestHandler):
 
     def loop(self):
         tornado.ioloop.IOLoop.instance().remove_timeout(self.handle)
-	
+
+        logging.info('long poll tick')
+
         try:
             events = self.QueueLog.select(QueueLog.q.id > self.last_event_id).orderBy('id').limit(1)
     	    event = events[0]
