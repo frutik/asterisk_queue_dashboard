@@ -3,17 +3,6 @@ import tornado
 import time
 import simplejson as json
 
-#from sqlobject import *
-#
-#class QueueLog(SQLObject):
-#    time = StringCol()
-#
-#    callid = StringCol()
-#    queuename = StringCol()
-#    agent = StringCol()
-#    event = StringCol()
-#    data = StringCol()
-#
 class GetEventsHandler(tornado.web.RequestHandler):
 
     schedule_time = 0.2
@@ -35,14 +24,14 @@ class GetEventsHandler(tornado.web.RequestHandler):
         tornado.ioloop.IOLoop.instance().remove_timeout(self.handle)
 	
         try:
-            events = QueueLog.select(QueueLog.q.id > self.last_event_id).orderBy('id').limit(1)
+            events = self.QueueLog.select(QueueLog.q.id > self.last_event_id).orderBy('id').limit(1)
     	    event = events[0]
 
         except:
             self.schedule_execution(self.schedule_time, self.loop)
             return
 
-	ev = json.dumps({
+        ev = json.dumps({
             'id': event.id,
             'time': event.time,
             'callid': event.callid.replace('.', ''),
@@ -54,7 +43,7 @@ class GetEventsHandler(tornado.web.RequestHandler):
         
         print ev
 
-	self.set_header("Content-Type", 'application/json')
+    	self.set_header("Content-Type", 'application/json')
         self.write(ev)
 
         self.finish()
