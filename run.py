@@ -4,6 +4,7 @@ import tornado.web
 from tornado.options import define, options
 
 from handlers.GetEventsHandler import GetEventsHandler
+from handlers.GetLatestEventHandler import GetLatestEventHandler
 
 import os.path
 import uuid
@@ -34,6 +35,7 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
             (r'/getevents/([0-9]+)', GetEventsHandler),
+            ('/latest_event/', GetLatestEventHandler),
         ]
         tornado.web.Application.__init__(self, handlers, http_settings)
 
