@@ -22,13 +22,12 @@ class GetLatestEventHandler(tornado.web.RequestHandler):
 #    @tornado.web.asynchronous
     def get(self):
 #        self.schedule_execution(self.schedule_time, self.loop)
-        try:
-            events = QueueLog.select().orderBy('-id').limit(1)
-            event_id = events[0].id
+#        try:
+        events = QueueLog.select().orderBy('-id').limit(1)
+        event_id = events[0].id
 
-        except:
-            event_id = 0
-            return
+#        except:
+#            event_id = 0
 
         print event_id
 
