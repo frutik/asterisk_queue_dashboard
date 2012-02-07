@@ -51,3 +51,6 @@ class GetEventsHandler(tornado.web.RequestHandler):
 
         self.finish()
 
+    def on_connection_close(self):
+        #TODO: Check if call to parent class needed.
+        tornado.ioloop.IOLoop.instance().remove_timeout(self.handle)
