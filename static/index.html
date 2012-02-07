@@ -1,0 +1,66 @@
+<html>
+<head>
+<script type="text/javascript" src='/static/js/jquery-1.7.1.min.js'></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    // is connected???
+    
+    var last_event = '285811';
+    
+    function node_creator(data) {
+	if (data.event == 'ENTERQUEUE') {
+	    $('#callers').append('<div style="background-color:red;" class="caller_' + data.callid + '">' + data.data + '</div>');
+//	    $('#calls');
+	    console.log('add caller ' + data.callid);
+	}
+
+	if (data.event == 'COMPLETEAGENT' || data.event == 'COMPLETECALLER') {
+	    console.log('remove caller ' + data.callid);
+	    $('.caller_' + data.callid).remove();
+	}
+    }
+
+    function node_status(data) {
+	if (data.event == 'ENTERQUEUE') {
+	    $('.caller_' + data.callid).css('background-color', 'green');
+	}
+    }
+    
+    function poll(){
+        $.ajax({
+    	    url: "http://80.243.146.77:8888/getevents/" + last_event, 
+    	    success: function(data){
+		    //alert(data.id);
+		    $('#test').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
+		    
+		    node_creator(data);
+		    node_status(data);
+		    
+		    last_event = data.id;
+		    
+                        
+    	    }, 
+    	    error: function(error){
+		console.log('ERROR');
+		console.log(error);
+    	    }, 
+    	    dataType: "json", 
+    	    complete: poll, 
+    	    timeout: 5000 
+    	});
+    }
+    
+    poll();
+    
+});
+
+</script>
+
+</head>
+<body>
+<textarea cols="80" rows="10" id="test"></textarea>
+
+<div id="callers"></div>
+</body>
+</html>
