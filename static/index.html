@@ -8,22 +8,19 @@
 $(document).ready(function() {
     // is connected???
     
-    //var last_event = '285811';
-    
     function caller_controller(data) {
-	if (data.event == 'ENTERQUEUE') {
-	    $('#callers').append('<div style="background-color:red;" class="caller_' + data.callid + '">' + data.data + '</div>');
-	    console.log('add caller ' + data.callid);
-	}
+        if (data.event == 'ENTERQUEUE') {
+            $('#callers').append('<div style="background-color:red;" class="caller_' + data.callid + '">' + data.data + '</div>');
+            console.log('add caller ' + data.callid);
+        }
 
-	if (data.event == 'COMPLETEAGENT' || data.event == 'COMPLETECALLER') {
-	    console.log('remove caller ' + data.callid);
-	    $('.caller_' + data.callid).remove();
-	}
+        if (data.event == 'COMPLETEAGENT' || data.event == 'COMPLETECALLER' || data.event == 'ABANDON') {
+            $('.caller_' + data.callid).remove();
+        }
 
-	if (data.event == 'CONNECT') {
-	    $('.caller_' + data.callid).css('background-color', 'green');
-	}
+        if (data.event == 'CONNECT') {
+            $('.caller_' + data.callid).css('background-color', 'green');
+        }
     }
 
     function agent_controller(data) {
