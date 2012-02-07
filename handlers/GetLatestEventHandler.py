@@ -21,7 +21,6 @@ class GetLatestEventHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
     def get(self):
-        self.last_event_id = int(last_event_id)
         self.schedule_execution(self.schedule_time, self.loop)
 
     def schedule_execution(self, schedule_time, callback):
