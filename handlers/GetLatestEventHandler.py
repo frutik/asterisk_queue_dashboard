@@ -30,6 +30,8 @@ class GetLatestEventHandler(tornado.web.RequestHandler):
             event_id = 0
             return
 
+        print event_id
+
         self.set_header("Content-Type", 'text/javascript')
         self.write("var last_event = '" + str(event_id) + "';")
 
