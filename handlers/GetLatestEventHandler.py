@@ -14,7 +14,7 @@ import simplejson as json
 #    event = StringCol()
 #    data = StringCol()
 
-class GetLatestEventsHandler(tornado.web.RequestHandler):
+class GetLatestEventHandler(tornado.web.RequestHandler):
 
     schedule_time = 0.2
     current_handle = None
