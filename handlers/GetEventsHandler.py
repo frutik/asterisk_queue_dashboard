@@ -27,10 +27,10 @@ class GetEventsHandler(tornado.web.RequestHandler):
         logging.info('long poll tick')
 
         try:
-            events = self.QueueLog.select(QueueLog.q.id > self.last_event_id).orderBy('id').limit(1)
+            events = self.QueueLog.select(self.QueueLog.q.id > self.last_event_id).orderBy('id').limit(1)
     	    event = events[0]
 
-        except:
+        except IndexError:
             self.schedule_execution(self.schedule_time, self.loop)
             return
 
