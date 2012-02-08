@@ -14,7 +14,11 @@ $(document).ready(function() {
             console.log('add caller ' + data.callid);
         }
 
-        if (data.event == 'COMPLETEAGENT' || data.event == 'COMPLETECALLER' || data.event == 'ABANDON') {
+        if (   data.event == 'COMPLETEAGENT'
+            || data.event == 'COMPLETECALLER'
+            || data.event == 'TRANSFER'
+            || data.event == 'ABANDON')
+        {
             $('.caller_' + data.callid).remove();
         }
 
@@ -25,32 +29,48 @@ $(document).ready(function() {
 
     function agent_controller(data) {
     }
-    
+
+    function layout_controller(data) {
+        $('#test').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
+    }
+
+    var controllers = [
+        caller_controller,
+        agent_controller,
+        layout_controller
+    ];
+
     function poll(){
         $.ajax({
     	    url: "/getevents/" + last_event, 
-    	    success: function(data){
 
-		    $('#test').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
-		    
-		    caller_controller(data);
-		    agent_controller(data);
-		    
-		    last_event = data.id;
-                        
-    	    }, 
+            success: function(data){
+                for (i = 0; i <= controllers.length; i++) {
+                    controllers[i](data);
+                }
+//                var array;
+//
+//                //everything below here works fine regardless of the two above cases
+//                array['something'] = ‘yay’;
+//                array['somethingelse'] = ‘more’;
+//
+//                for ( keyVar in array ) {
+//                alert(array[keyVar]);
+//                }
+                last_event = data.id;
+    	    },
+
     	    error: function(error){
-		console.log('ERROR');
-		console.log(error);
+                console.log(error);
     	    }, 
-    	    dataType: "json", 
+
+    	    dataType: "json",
     	    complete: poll, 
-    	    timeout: 5000 
+    	    timeout: 60000
     	});
     }
     
     poll();
-    
 });
 
 </script>
