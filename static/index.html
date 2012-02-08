@@ -34,30 +34,15 @@ $(document).ready(function() {
         $('#test').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
     }
 
-    var controllers = [
-        caller_controller,
-        agent_controller,
-        layout_controller
-    ];
-
     function poll(){
-        that = this
         $.ajax({
     	    url: "/getevents/" + last_event, 
 
             success: function(data){
-                for (i = 0; i <= controllers.length; i++) {
-                    that.controllers[i](data);
-                }
-//                var array;
-//
-//                //everything below here works fine regardless of the two above cases
-//                array['something'] = ‘yay’;
-//                array['somethingelse'] = ‘more’;
-//
-//                for ( keyVar in array ) {
-//                alert(array[keyVar]);
-//                }
+                caller_controller(data);
+                agent_controller(data);
+                layout_controller(data);
+
                 last_event = data.id;
     	    },
 
