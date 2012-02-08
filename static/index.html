@@ -41,12 +41,13 @@ $(document).ready(function() {
     ];
 
     function poll(){
+        that = this
         $.ajax({
     	    url: "/getevents/" + last_event, 
 
             success: function(data){
                 for (i = 0; i <= controllers.length; i++) {
-                    controllers[i](data);
+                    that.controllers[i](data);
                 }
 //                var array;
 //
