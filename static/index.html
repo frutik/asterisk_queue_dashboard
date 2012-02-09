@@ -47,6 +47,7 @@ $(document).ready(function() {
         if (   data.event == 'COMPLETEAGENT'
             || data.event == 'COMPLETECALLER'
             || data.event == 'TRANSFER'
+            || data.event == 'CONNECT'
             || data.event == 'RINGNOANSWER')
         {
             $.tmpl("agentBlock", data).appendTo('#agents');
