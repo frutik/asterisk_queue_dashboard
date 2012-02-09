@@ -13,7 +13,7 @@ $(document).ready(function() {
             'style="margin:5px;background-color:red;" ' +
             'class="caller caller_${callid}">' +
             '${data}' +
-            '<span class="agent"></span>' +
+            '<span class="agent_${callid}"></span>' +
     '</div>');
 
     function caller_controller(data) {
@@ -32,7 +32,7 @@ $(document).ready(function() {
         }
 
         if (data.event == 'CONNECT') {
-            $('.caller_' + data.callid + ' ').append(data.agent);
+            $('.agent_' + data.callid).append(' -> ' + data.agent);
             $('.caller_' + data.callid).css('background-color', 'green');
         }
     }
