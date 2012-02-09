@@ -16,7 +16,13 @@ $(document).ready(function() {
             '<span class="agent_${callid}"></span>' +
     '</div>');
 
-    function caller_controller(data) {
+    $.template("agentBlock", '<div ' +
+            'style="margin:5px;background-color:blue;" ' +
+            'class="agent agent_${agent}">' +
+            '${data}' +
+    '</div>');
+
+    function callers_controller(data) {
         if (data.event == 'ENTERQUEUE') {
             $.tmpl("callerBlock", data).appendTo('#callers');
 
@@ -37,11 +43,14 @@ $(document).ready(function() {
         }
     }
 
-    function agent_controller(data) {
+    function agents_controller(data) {
+    }
+
+    function links_controller(data) {
     }
 
     function layout_controller(data) {
-        $('#test').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
+        $('#log').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
     }
 
     function poll(){
@@ -49,8 +58,9 @@ $(document).ready(function() {
     	    url: "/getevents/" + last_event, 
 
             success: function(data){
-                caller_controller(data);
-                agent_controller(data);
+                callers_controller(data);
+                agents_controller(data);
+                links_controller(data);
                 layout_controller(data);
 
                 last_event = data.id;
@@ -73,7 +83,7 @@ $(document).ready(function() {
 
 </head>
 <body>
-<textarea cols="80" rows="10" id="test"></textarea>
+<textarea cols="80" rows="10" id="log"></textarea>
 
 <div id="callers"></div>
 </body>
