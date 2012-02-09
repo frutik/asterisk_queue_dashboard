@@ -7,10 +7,14 @@
 <script type="text/javascript">
 $(document).ready(function() {
     // is connected???
-    
+
+    $.template( "callerBlock", '<div started="${time}" style="background-color:red;" class="caller_${callid}">${data}</div>');
+
     function caller_controller(data) {
         if (data.event == 'ENTERQUEUE') {
-            $('#callers').append('<div style="background-color:red;" class="caller_' + data.callid + '">' + data.data + '</div>');
+            //$('#callers').append('<div style="background-color:red;" class="caller_' + data.callid + '">' + data.data + '</div>');
+            $.tmpl("callerBlock", data).appendTo('#callers');
+
             console.log('add caller ' + data.callid);
         }
 
