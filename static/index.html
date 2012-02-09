@@ -32,7 +32,7 @@ $(document).ready(function() {
         }
 
         if (data.event == 'CONNECT') {
-            $('.agent_' + data.callid).append(' -> ' + data.agent);
+            $('.agent_' + data.callid).html(' -> ' + data.agent);
             $('.caller_' + data.callid).css('background-color', 'green');
         }
     }
