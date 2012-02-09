@@ -44,6 +44,13 @@ $(document).ready(function() {
     }
 
     function agents_controller(data) {
+        if (   data.event == 'COMPLETEAGENT'
+            || data.event == 'COMPLETECALLER'
+            || data.event == 'TRANSFER'
+            || data.event == 'RINGNOANSWER')
+        {
+            $.tmpl("agentBlock", data).appendTo('#agents');
+        }
     }
 
     function links_controller(data) {
@@ -84,7 +91,11 @@ $(document).ready(function() {
 </head>
 <body>
 <textarea cols="80" rows="10" id="log"></textarea>
-
-<div id="callers"></div>
+<table width="100%">
+<tr valign="top">
+<td width="70%" id="callers"></td>
+<td id="agents"></td>
+</tr>
+</table>
 </body>
 </html>
