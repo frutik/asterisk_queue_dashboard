@@ -34,15 +34,20 @@ class GetEventsHandler(tornado.web.RequestHandler):
             self.schedule_execution(self.schedule_time, self.loop)
             return
 
-        ev = json.dumps({
+        e = {
             'id': event.id,
             'time': event.time,
             'callid': event.callid.replace('.', ''),
             'queuename': event.queuename,
-            'agent': event.agent,
-            'event': event.event,
-            'data': event.data
-        })
+            'agent': event.agent.replace('SIP/', ''),
+            'event': event.event
+            }
+
+        print getattr(self, '_completeagent_data')
+
+        e.update(self._completeagent_data(event.data))
+
+        ev = json.dumps(e)
         
         print ev
 
@@ -50,6 +55,46 @@ class GetEventsHandler(tornado.web.RequestHandler):
         self.write(ev)
 
         self.finish()
+
+    def _configreload_data(self, data):
+        return {}
+
+    def _exitwithtimeout_data(self, data):
+        return {}
+
+    def _completeagent_data(self, data):
+        return {}
+
+    def _ringnoanswer_data(self, data):
+#        RINGNOANSWER(ringtime)
+        return {}
+
+    def _addmember_data(self, data):
+        return {}
+
+    def _connect_data(self, data):
+        return {}
+
+    def _exitempty_data(self, data):
+        return {}
+
+    def _enterqueue_data(self, data):
+        return {}
+
+    def _transfer_data(self, data):
+        return {}
+
+    def _queuestart_data(self, data):
+        return {}
+
+    def _completecaller_data(self, data):
+        return {}
+
+    def _abandon_data(self, data):
+        return {}
+
+    def _removemember_data(self, data):
+        return {}
 
     def on_connection_close(self):
         #TODO: Check if call to parent class needed.

@@ -52,6 +52,12 @@ $(document).ready(function() {
         {
             $.tmpl("agentBlock", data).appendTo('#agents');
         }
+
+        if (data.event == 'REMOVEMEMBER')
+        {
+            $('.agent_' + data.agent).remove();
+        }
+
     }
 
     function links_controller(data) {

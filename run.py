@@ -20,7 +20,6 @@ sqlhub.processConnection = connection
 
 class QueueLog(SQLObject):
     time = StringCol()
-
     callid = StringCol()
     queuename = StringCol()
     agent = StringCol()
