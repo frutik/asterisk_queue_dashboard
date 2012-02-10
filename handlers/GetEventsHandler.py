@@ -72,105 +72,45 @@ class GetEventsHandler(tornado.web.RequestHandler):
 
     def _abandon_data(self, data):
         return self._parsed_data(['position', 'origposition', 'waittime'], data)
-#        t = data.split(self.delimiter)
-#        return {
-#            'position': t[0],
-#            'origposition': t[1],
-#            'waittime': t[2],
-#        }
 
     def _agentlogin_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'channel': t[0],
-        }
+        return self._parsed_data(['channel',], data)
 
     def _agentcallbacklogin_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'exten@context': t[0],
-        }
+        return self._parsed_data(['exten@context',], data)
 
     def _agentlogoff_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'channel': t[0],
-            'logintime': t[1],
-        }
+        return self._parsed_data(['channel', 'logintime',], data)
 
     def _agentcallbacklogoff_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'exten@context': t[0],
-            'logintime': t[1],
-            'reason': t[2],
-        }
+        return self._parsed_data(['exten@context', 'logintime', 'reason',], data)
 
     def _completeagent_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'holdtime': t[0],
-            'calltime': t[1],
-            'origposition': t[2],
-        }
+        return self._parsed_data(['holdtime', 'calltime', 'origposition',], data)
 
     def _completecaller_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'holdtime': t[0],
-            'calltime': t[1],
-            'origposition': t[2],
-        }
+        return self._parsed_data(['holdtime', 'calltime', 'origposition',], data)
 
     def _connect_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'holdtime': t[0],
-            'bridgedchanneluniqueid': t[1],
-        }
+        return self._parsed_data(['holdtime', 'bridgedchanneluniqueid',], data)
 
     def _enterqueue_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'url': t[0],
-            'callerid': t[1],
-        }
+        return self._parsed_data(['url', 'callerid',], data)
 
     def _exitempty_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'position': t[0],
-            'origposition': t[1],
-            'waittime': t[2],
-        }
+        return self._parsed_data(['position', 'origposition', 'waittime',], data)
 
     def _exitwithkey_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'key': t[0],
-            'position': t[1],
-        }
+        return self._parsed_data(['key', 'position',], data)
 
     def _exitwithtimeout_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'position': t[0],
-        }
+        return self._parsed_data(['position',], data)
 
     def _ringnoanswer_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'ringtime': t[0],
-        }
+        return self._parsed_data(['ringtime',], data)
 
     def _transfer_data(self, data):
-        t = data.split(self.delimiter)
-        return {
-            'extension': t[0],
-            'context': t[1],
-            'holdtime': t[2],
-            'calltime': t[3],
-        }
+        return self._parsed_data(['extension', 'context', 'holdtime', 'calltime',], data)
 
     def on_connection_close(self):
         #TODO: Check if call to parent class needed.
