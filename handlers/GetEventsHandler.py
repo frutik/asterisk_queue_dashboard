@@ -7,7 +7,7 @@ import logging
 class GetEventsHandler(tornado.web.RequestHandler):
 
     schedule_time = 0.2
-    delimiter = self.delimiter
+    delimiter = '|'
 
     def initialize(self, **kwargs):
         super(GetEventsHandler, self).initialize()
