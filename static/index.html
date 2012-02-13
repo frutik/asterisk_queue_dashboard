@@ -97,14 +97,24 @@ $(document).ready(function() {
     }
     
     poll();
-    setInterval(schedule_controller, 5000);
+    setInterval('schedule_controller', 5000);
 });
 
 </script>
 
 </head>
 <body>
-<textarea cols="80" rows="10" id="log"></textarea>
+<table width="100%">
+<tr valign="top">
+<td width="70%"><textarea cols="80" rows="10" id="log"></textarea></td>
+<td><span>total answered: <span id="total_finished">0</span></span><br />
+<span>total finished by agent: <span id="total_agent">0</span></span><br />
+<span>total finished by caller: <span id="total_caller">0</span></span><br />
+<span>total abandoned: <span id="total_abandoned">0</span></span><br />
+<span>total timeouted: <span id="total_timeouted">0</span></span><br />
+<span>total transfered: <span id="total_transfered">0</span></span></td>
+</tr>
+</table>
 <table width="100%">
 <tr valign="top">
 <td width="70%" id="callers"></td>
