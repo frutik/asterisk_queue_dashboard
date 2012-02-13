@@ -69,6 +69,10 @@ $(document).ready(function() {
         $('#log').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
     }
 
+    function schedule_controller() {
+        console.log('run periodic task');
+    }
+
     function poll(){
         $.ajax({
     	    url: "/getevents/" + last_event, 
@@ -93,6 +97,8 @@ $(document).ready(function() {
     }
     
     poll();
+
+    var scheduler = setInterval(schedule_controller(), 5000);
 });
 
 </script>
