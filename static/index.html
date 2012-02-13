@@ -50,7 +50,9 @@ $(document).ready(function() {
             || data.event == 'CONNECT'
             || data.event == 'RINGNOANSWER')
         {
-            $.tmpl("agentBlock", data).appendTo('#agents');
+            if ($('.agent_' + data.agent).length == 0 ) {
+                $.tmpl("agentBlock", data).appendTo('#agents');
+            }
         }
 
         if (data.event == 'REMOVEMEMBER')
