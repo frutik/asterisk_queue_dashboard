@@ -14,6 +14,23 @@ class GetEventsHandler(tornado.web.RequestHandler):
         self.QueueLog = kwargs['QueueLog']
         self.current_handle = None
 
+        self.event_data_fields = {
+            'abandon': ['position', 'origposition', 'waittime'],
+            'agentlogin': ['channel',],
+            'agentcallbacklogin': ['exten@context',],
+            'agentlogoff': ['channel', 'logintime',],
+            'agentcallbacklogoff': ['exten@context', 'logintime', 'reason',],
+            'completeagent': ['holdtime', 'calltime', 'origposition',],
+            'completecaller': ['holdtime', 'calltime', 'origposition',],
+            'connect': ['holdtime', 'bridgedchanneluniqueid',],
+            'enterqueue': ['url', 'callerid',],
+            'exitempty': ['position', 'origposition', 'waittime',],
+            'exitwithkey': ['key', 'position',],
+            'exitwithtimeout': ['position',],
+            'ringnoanswer': ['ringtime',],
+            'transfer': ['extension', 'context', 'holdtime', 'calltime',]
+        }
+
     @tornado.web.asynchronous
     def get(self, last_event_id):
         self.last_event_id = int(last_event_id)
@@ -45,7 +62,7 @@ class GetEventsHandler(tornado.web.RequestHandler):
             }
 
         try:
-            de = getattr(self, '_' + event.event.lower() + '_data')(event.data)
+            de = self._parse_data(self.event_data_fields[event.event.lower()], event.data)
 
         except:
             pass
@@ -62,55 +79,13 @@ class GetEventsHandler(tornado.web.RequestHandler):
 
         self.finish()
 
-    def _parsed_data(self, keys, data):
+    def _parse_data(self, keys, data):
         t = data.split(self.delimiter)
         r = {}
         for i,n in enumerate(keys):
             r[n] = t[i]
 
         return r
-
-    def _abandon_data(self, data):
-        return self._parsed_data(['position', 'origposition', 'waittime'], data)
-
-    def _agentlogin_data(self, data):
-        return self._parsed_data(['channel',], data)
-
-    def _agentcallbacklogin_data(self, data):
-        return self._parsed_data(['exten@context',], data)
-
-    def _agentlogoff_data(self, data):
-        return self._parsed_data(['channel', 'logintime',], data)
-
-    def _agentcallbacklogoff_data(self, data):
-        return self._parsed_data(['exten@context', 'logintime', 'reason',], data)
-
-    def _completeagent_data(self, data):
-        return self._parsed_data(['holdtime', 'calltime', 'origposition',], data)
-
-    def _completecaller_data(self, data):
-        return self._parsed_data(['holdtime', 'calltime', 'origposition',], data)
-
-    def _connect_data(self, data):
-        return self._parsed_data(['holdtime', 'bridgedchanneluniqueid',], data)
-
-    def _enterqueue_data(self, data):
-        return self._parsed_data(['url', 'callerid',], data)
-
-    def _exitempty_data(self, data):
-        return self._parsed_data(['position', 'origposition', 'waittime',], data)
-
-    def _exitwithkey_data(self, data):
-        return self._parsed_data(['key', 'position',], data)
-
-    def _exitwithtimeout_data(self, data):
-        return self._parsed_data(['position',], data)
-
-    def _ringnoanswer_data(self, data):
-        return self._parsed_data(['ringtime',], data)
-
-    def _transfer_data(self, data):
-        return self._parsed_data(['extension', 'context', 'holdtime', 'calltime',], data)
 
     def on_connection_close(self):
         #TODO: Check if call to parent class needed.
