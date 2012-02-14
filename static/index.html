@@ -72,17 +72,14 @@ $(document).ready(function() {
     function layout_controller(data) {
         $('#log').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
 
-        if (   data.event == 'COMPLETEAGENT'
-            || data.event == 'COMPLETECALLER'
-            || data.event == 'TRANSFER')
-        {
-            update_counter('total_successful');
+        if (data.event == 'CONNECT') {
+            update_counter('total_answered');
         }
 
         if (   data.event == 'ABANDON'
             || data.event == 'TIMEOUT')
         {
-            update_counter('total_unsuccessful');
+            update_counter('total_unanswered');
         }
 
         if (data.event == 'COMPLETEAGENT') {
@@ -144,13 +141,13 @@ $(document).ready(function() {
 <table width="100%">
 <tr valign="top">
 <td width="70%"><textarea cols="80" rows="10" id="log"></textarea></td>
-<td><span>total answered: <span id="total_successful">0</span></span><br />
+<td><span>total answered: <span id="total_answered">0</span></span><br />
 <span>total finished by agent: <span id="total_completeagent">0</span></span><br />
 <span>total finished by caller: <span id="total_completecaller">0</span></span><br />
 <span>total abandoned: <span id="total_abandon">0</span></span><br />
 <span>total timeouted: <span id="total_timeout">0</span></span><br />
 <span>total transfered: <span id="total_transfer">0</span></span><br />
-<span>total unsuccessful: <span id="total_unsuccessful">0</span></span></td>
+<span>total unsuccessful: <span id="total_unanswered">0</span></span></td>
 </tr>
 </table>
 <table width="100%">
