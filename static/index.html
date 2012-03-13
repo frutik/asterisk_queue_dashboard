@@ -1,19 +1,26 @@
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript" src='/static/js/jquery-1.7.1.min.js'></script>
 <script src="/static/js/jquery.tmpl.min.js" type="text/javascript"></script>
 <script src="/latest_event/" type="text/javascript"></script>
-
+<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">   
+<script src="/static/bootstrap/js/bootstrap-modal.js"></script>
+<script src="/static/highcharts/js/highcharts.js" type="text/javascript"></script>
+<script src="/static/highstock/highstock.js" type="text/javascript"></script>
 <script type="text/javascript">
 $(document).ready(function() {
     // is connected???
 
     $.template("callerBlock", '<div ' +
-            'started="${time}" ' +
-            'style="margin:5px;background-color:red;" ' +
-            'class="caller caller_${callid}">' +
+            'entered_queue="${time}" ' +
+            'connected="" ' +
+            'style="margin:5px;" ' +
+            'class="caller caller_${callid} waiting">' +
             '${callerid}' +
             '<span class="agent_${callid}"></span>' +
+            '<br/>Wait time: <span class="wait_time_${callid}">0</span>' +
+            '<br/>Call time: <span class="call_time_${callid}">0</span>' +
     '</div>');
 
     $.template("agentBlock", '<div ' +
@@ -25,6 +32,11 @@ $(document).ready(function() {
     function update_counter(counter_name) {
         counter_name = '#' + counter_name;
         $(counter_name).html(parseInt($(counter_name).html()) + 1);
+    }
+
+    function switch_agent(call_id, state1, state2) {
+	$('.caller_' + call_id).removeClass(state1);
+        $('.caller_' + call_id).addClass(state2);
     }
 
     function callers_controller(data) {
@@ -44,7 +56,8 @@ $(document).ready(function() {
 
         if (data.event == 'CONNECT') {
             $('.agent_' + data.callid).html(' -> ' + data.agent);
-            $('.caller_' + data.callid).css('background-color', 'green');
+            
+            switch_agent(data.callid, 'waiting', 'answered')
         }
     }
 
@@ -107,6 +120,28 @@ $(document).ready(function() {
         console.log('run periodic task');
     }
 
+    function check_finish_ratio() {
+	total_completeagent = parseInt($('#total_completeagent').html());
+        total_completecaller = parseInt($('#total_completecaller').html());
+        
+    	if (total_completeagent > total_completecaller) {
+    	    $('#total_completeagent').addClass('btn-warning');
+    	} else {
+    	    $('#total_completeagent').removeClass('btn-warning');
+    	}
+    
+    }
+
+    function warnings_controller(data) {
+        if (data.event == 'COMPLETEAGENT') {
+    	    check_finish_ratio();
+        }
+
+        if (data.event == 'COMPLETECALLER') {
+    	    check_finish_ratio();
+        }
+    }
+
     function poll(){
         $.ajax({
     	    url: "/getevents/" + last_event, 
@@ -116,6 +151,7 @@ $(document).ready(function() {
                 agents_controller(data);
                 links_controller(data);
                 layout_controller(data);
+                warnings_controller(data);
 
                 last_event = data.id;
     	    },
@@ -135,19 +171,58 @@ $(document).ready(function() {
 });
 
 </script>
+<style>
+    .answered {
+	background-color: green;
+    }
 
+    .waiting {
+	background-color: red;
+    }
+
+      body {
+              padding-top: 60px;
+    }
+</style>
 </head>
 <body>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+	<div class="container">
+    	    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        	<span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">Callcenter live dashboard</a>
+            <div class="nav-collapse">
+        	<ul class="nav">
+            	    <li class="active"><a href="#">Dashboard</a></li>
+                    <li><a data-toggle="modal" href="#logging">Log</a></li>
+                    <li><a data-toggle="modal" href="#chart">Chart</a></li>
+                    <li><a data-toggle="modal" href="#map">Map</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+                                                                                                                                            
+
+<div class="container">
 <table width="100%">
 <tr valign="top">
-<td width="70%"><textarea cols="80" rows="10" id="log"></textarea></td>
-<td><span>total answered: <span id="total_answered">0</span></span><br />
-<span>total finished by agent: <span id="total_completeagent">0</span></span><br />
-<span>total finished by caller: <span id="total_completecaller">0</span></span><br />
-<span>total abandoned: <span id="total_abandon">0</span></span><br />
-<span>total timeouted: <span id="total_timeout">0</span></span><br />
-<span>total transfered: <span id="total_transfer">0</span></span><br />
-<span>total unsuccessful: <span id="total_unanswered">0</span></span></td>
+<td>
+<ul class="thumbnails" style="margin-bottom: 0px;">
+    <li class="span3 thumbnail" style="height:40;"><h6 style="text-align:center;">total answered:</h6><h3 style="text-align:center; margin-top: -4px;" id="total_answered">0</h3></li>
+    <li class="span3 thumbnail" style="height:40;"><h6 style="text-align:center;">finished by agent:</h6><h3 style="text-align:center; margin-top: -4px;"  id="total_completeagent">0</h3></li>
+    <li class="span3 thumbnail" style="height:40;"><h6 style="text-align:center;">finished by caller:</h6><h3 style="text-align:center; margin-top: -4px;"  id="total_completecaller">0</h3></li>
+    <li class="span3 thumbnail" style="height:40;"><h6 style="text-align:center;">transfered:</h6><h3 style="text-align:center; margin-top: -4px;"  id="total_transfer">0</h3></li>
+</ul>
+<ul class="thumbnails" style="margin-bottom: 0px;">
+    <li class="span3 thumbnail" style="height:40;"><h6 style="text-align:center;">total unanswered:</h6><h3 style="text-align:center; margin-top: -4px;"  id="total_unanswered">0</h3></li>
+    <li class="span3 thumbnail" style="height:40;"><h6 style="text-align:center;">abandoned:</h6><h3 style="text-align:center; margin-top: -4px;"  id="total_abandon">0</h3></li>
+    <li class="span3 thumbnail" style="height:40;"><h6 style="text-align:center;">timeouted:</h6><h3 style="text-align:center; margin-top: -4px;"  id="total_timeout">0</h3></li>
+</ul>
 </tr>
 </table>
 <table width="100%">
@@ -156,5 +231,97 @@ $(document).ready(function() {
 <td id="agents">Agents:<hr/></td>
 </tr>
 </table>
+</div>
+<div class="modal hide" id="chart">
+    <div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+        <h3>Queue size chart</h3>
+    </div>
+    <div class="modal-body">
+	<center><div id="chart-container" style="width: 800; height: 400px"></div>
+    </div>
+</div>
+
+<div class="modal hide" id="map">
+    <div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+        <h3>Queue size chart</h3>
+    </div>
+    <div class="modal-body">
+    </div>
+</div>
+
+<div class="modal hide" id="logging">
+    <div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+        <h3>Log</h3>
+    </div>
+    <div class="modal-body"><textarea style="width:100%;" rows="10" id="log"></textarea></div>
+</div>
+<a href="https://github.com/frutik/asterisk_queue_dashboard" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0; z-index:2000;" src="https://a248.e.akamai.net/assets.github.com/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
+
+<script>
+
+var chart;
+
+function requestData() {
+    $.ajax({
+	url: 'asterisk.php?action=chartJSON',
+	    success: function(point) {
+	    	    var series = chart.series[0],
+	    	    	    shift = series.data.length > 86400; // shift if the series is longer than 20
+	    	    		    
+	    	    			    p = eval(point)
+	    	    				    chart.series[0].addPoint([p[0] * 1000, p[1]], true, shift);
+	    	    					    // call it again after one second
+	    	    						    setTimeout(requestData, 1000);    
+	    	    							},
+	    	    							    cache: false
+	    	    							        });
+	    	    							        }
+	    	    							        
+
+$(document).ready(function() {
+    chart = new Highcharts.Chart({
+	chart: {
+	        renderTo: 'chart-container',
+	    	    defaultSeriesType: 'spline',
+	    		    events: {
+	    			    load: requestData
+	    				    }
+	    					},
+	    					    
+	    						title: {
+	    						        text: 'Queue stats'
+	    						    	},
+	    						    	    
+	    						    		xAxis: {
+	    						    		        type: 'datetime',
+	    						    		    	    tickPixelInterval: 150,
+	    						    		    		    maxZoom: 20 * 1000
+	    						    		    			},
+	    						    		    			    
+	    						    		    				yAxis: {
+	    						    		    				        minPadding: 0.2,
+	    						    		    				    	    maxPadding: 0.2,
+	    						    		    				    		    title: {
+	    						    		    				    			    text: 'Value',
+	    						    		    				    				    margin: 80
+	    						    		    				    					    }
+	    						    		    				    						},
+	    						    		    				    						    
+	    						    		    				    							series: [{
+	    						    		    				    							        name: 'Callers waiting',
+	    						    		    				    							    	    data: []
+	    						    		    				    							    		}],
+	    						    		    				    							    		    
+	    						    		    				    							    			plotOptions: {
+	    						    		    				    							    				     spline: { lineWidth: 1 },
+	    						    		    				    							    				             marker: { enabled: false }
+	    						    		    				    							    				                }
+	    						    		    				    							    				                    });        
+	    						    		    				    							    				                    });
+	    						    		    				    							    				                    </script>
+
 </body>
 </html>
