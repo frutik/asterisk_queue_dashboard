@@ -1,6 +1,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">Live Dashboard</title>
 <script type="text/javascript" src='/static/js/jquery-1.7.1.min.js'></script>
 <script src="/static/js/jquery.tmpl.min.js" type="text/javascript"></script>
 <script src="/latest_event/" type="text/javascript"></script>
@@ -9,8 +10,17 @@
 <script src="/static/highcharts/js/highcharts.js" type="text/javascript"></script>
 <script src="/static/highstock/highstock.js" type="text/javascript"></script>
 <script type="text/javascript">
+
 $(document).ready(function() {
-    // is connected???
+    //var last_event = '458651';
+    
+    set_counter('total_answered', total_answered);
+    set_counter('total_completeagent', finished_by_agent);
+    set_counter('total_completecaller', finished_by_caller);
+    set_counter('total_transfer', transfered);
+    set_counter('total_unanswered', unanswered);
+    set_counter('total_abandon', abandoned);
+    set_counter('total_timeout', timeouted);
 
     $.template("callerBlock", '<div ' +
             'entered_queue="${time}" ' +
@@ -29,17 +39,38 @@ $(document).ready(function() {
             '${agent}' +
     '</div>');
 
+    function update_title() {
+	$('#title').html('Live Dashboard - ' + $('#total_answered').html() + '/' + $('#total_unanswered').html());
+    }
+
     function update_counter(counter_name) {
         counter_name = '#' + counter_name;
         $(counter_name).html(parseInt($(counter_name).html()) + 1);
+        
+        update_title();
     }
 
+    function set_counter(counter_name, value) {
+        $('#' + counter_name).html(parseInt(value));
+    }
+    
     function switch_agent(call_id, state1, state2) {
 	$('.caller_' + call_id).removeClass(state1);
         $('.caller_' + call_id).addClass(state2);
     }
 
+    function is_catching_up(event_id) {
+	$('#catchup_alert').hide();
+	$('#live').show();
+	
+	return false;
+    } 
+
     function callers_controller(data) {
+	if (is_catching_up(data.id)) {
+	    return;
+	}
+    
         if (data.event == 'ENTERQUEUE') {
             $.tmpl("callerBlock", data).appendTo('#callers');
 
@@ -62,6 +93,10 @@ $(document).ready(function() {
     }
 
     function agents_controller(data) {
+	if (is_catching_up(data.id)) {
+	    return;
+	}
+
         if (   data.event == 'COMPLETEAGENT'
             || data.event == 'COMPLETECALLER'
             || data.event == 'TRANSFER'
@@ -118,6 +153,20 @@ $(document).ready(function() {
 
     function schedule_controller() {
         console.log('run periodic task');
+	var now = new Date( );
+	//newDate.setTime( unixtime*1000 );
+	//dateString = newDate.toUTCString );
+        
+        $('.waiting').each(function() {
+	    ts = new Date( );
+	    ts.setTime(parseInt($(this).attr('entered_queue'))*1000);
+
+    	    console.log(now - ts);
+        });
+
+        $('.answered').each(function() {
+    	    console.log($(this).attr('connected'));
+        });
     }
 
     function check_finish_ratio() {
@@ -168,6 +217,7 @@ $(document).ready(function() {
     
     poll();
     setInterval(schedule_controller, 5000);
+    update_title();
 });
 
 </script>
@@ -225,7 +275,8 @@ $(document).ready(function() {
 </ul>
 </tr>
 </table>
-<table width="100%">
+
+<table width="100%" id="live">
 <tr valign="top">
 <td width="70%" id="callers">Callers:<hr/></td>
 <td id="agents">Agents:<hr/></td>
