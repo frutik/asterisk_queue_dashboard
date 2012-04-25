@@ -12,8 +12,7 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-    //var last_event = '458651';
-    
+
     set_counter('total_answered', total_answered);
     set_counter('total_completeagent', finished_by_agent);
     set_counter('total_completecaller', finished_by_caller);
@@ -59,18 +58,10 @@ $(document).ready(function() {
         $('.caller_' + call_id).addClass(state2);
     }
 
-    function is_catching_up(event_id) {
-	$('#catchup_alert').hide();
-	$('#live').show();
-	
-	return false;
-    } 
+    var holdtime = new Array();
+    var holdtime_agents = {};
 
     function callers_controller(data) {
-	if (is_catching_up(data.id)) {
-	    return;
-	}
-    
         if (data.event == 'ENTERQUEUE') {
             $.tmpl("callerBlock", data).appendTo('#callers');
 
@@ -87,16 +78,23 @@ $(document).ready(function() {
 
         if (data.event == 'CONNECT') {
             $('.agent_' + data.callid).html(' -> ' + data.agent);
+        
+    	    holdtime.push(data.holdtime);
+    	    
+    	    if (!holdtime_agents[data.agent]) {
+    		holdtime_agents[data.agent] = new Array();
+    	    }
+    	    
+	    holdtime_agents[data.agent],push(data.holdtime);
             
+            console.log(holdtime);
+            console.log(holdtime_agents);
+        
             switch_agent(data.callid, 'waiting', 'answered')
         }
     }
 
     function agents_controller(data) {
-	if (is_catching_up(data.id)) {
-	    return;
-	}
-
         if (   data.event == 'COMPLETEAGENT'
             || data.event == 'COMPLETECALLER'
             || data.event == 'TRANSFER'
@@ -119,6 +117,8 @@ $(document).ready(function() {
 
     function layout_controller(data) {
         $('#log').append(data.time + ' ' + data.event + ' ' + data.callid + '\n');
+
+        console.log(data);
 
         if (data.event == 'CONNECT') {
             update_counter('total_answered');
@@ -167,6 +167,7 @@ $(document).ready(function() {
         $('.answered').each(function() {
     	    console.log($(this).attr('connected'));
         });
+        
     }
 
     function check_finish_ratio() {
